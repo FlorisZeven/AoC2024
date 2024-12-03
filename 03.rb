@@ -1,22 +1,18 @@
 require_relative 'aoc'
 
 class MullItOverSolver < AoCExerciseSolver
-  attr_accessor :raw_lines
+  attr_accessor :raw_string
 
+  # Ex: mul(1,2) - Capture the digits immediately for later use
   MUL_REGEX = /mul\((\d+),(\d+)\)/
-  DO_OR_DONT_REGEX = /(?=do\(\)|don't\(\))/
 
-  def initialize(*args)
-    @raw_lines = []
-    super
-  end
+  def initialize(*args); super; end
 
   def preprocess
-    parse_lines do |line|
-      @raw_lines << line
-    end
+    @raw_string = File.read(@input_file)
   end
 
+  # Find all valid multiplications in a string and sum the result of their multiplications
   def sum_muls_in_str(str)
     str.scan(MUL_REGEX).sum do |mul|
       left, right = mul.map(&:to_i)
@@ -25,27 +21,23 @@ class MullItOverSolver < AoCExerciseSolver
   end
 
   def solve_part_1
-    raw_lines.sum do |line|
-      sum_muls_in_str(line)
-    end
+    sum_muls_in_str(@raw_string)
   end
 
   def solve_part_2
-    raw_lines.sum do |line|
-      dos_or_donts = line.split(DO_OR_DONT_REGEX)
+    # Split input with delimiter do() or don't() - but keep the delimiter
+    # per split using a positive lookahead so we can filter don't()
+    dos_or_donts = @raw_string.split(/(?=do\(\)|don't\(\))/)
 
-      valid = dos_or_donts.select! do |do_or_dont|
-        !do_or_dont.start_with?("don't()")
+    # Filter don't() and sum the valid multiplications of the remaining substrings
+    dos_or_donts.filter_map do |substring|
+      if !substring.start_with?("don't()")
+        sum_muls_in_str(substring)
       end
-
-      valid.sum do |str|
-        sum_muls_in_str(str)
-      end
-    end
+    end.sum
   end
 end
 
-# PART 2: 106266128 TOO HIGH
 solver = MullItOverSolver.new(__FILE__.sub('.rb', '_input.txt'))
 solver.preprocess
 solver.solve
