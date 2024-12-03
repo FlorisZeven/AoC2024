@@ -26,10 +26,10 @@ class MullItOverSolver < AoCExerciseSolver
 
   def solve_part_2
     # Split input with delimiter do() or don't() - but keep the delimiter
-    # per split using a positive lookahead so we can filter don't()
+    # per split using a positive lookahead so we can filter the don't()s
     dos_or_donts = @raw_string.split(/(?=do\(\)|don't\(\))/)
 
-    # Filter don't() and sum the valid multiplications of the remaining substrings
+    # Filter don't() and sum the valid multiplications of the remaining substrings, and sum those
     dos_or_donts.filter_map do |substring|
       if !substring.start_with?("don't()")
         sum_muls_in_str(substring)
