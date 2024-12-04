@@ -25,6 +25,7 @@ class AoCExerciseSolver
 
   # Nicely print both solutions
   def solve
+    puts "Solution for input file: #{@input_file}"
     puts "PART 1: #{solve_part_1}"
     puts "PART 2: #{solve_part_2}"
   end
