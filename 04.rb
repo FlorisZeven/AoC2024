@@ -71,9 +71,9 @@ class CeresSearchSolver < AoCExerciseSolver
   end
 end
 
-small_solver = CeresSearchSolver.new(__FILE__.sub('.rb', '_small_input.txt'))
-small_solver.preprocess
-small_solver.solve
+test_solver = CeresSearchSolver.new(__FILE__.sub('.rb', '_test.txt'))
+test_solver.preprocess
+test_solver.solve
 
 solver = CeresSearchSolver.new(__FILE__.sub('.rb', '_input.txt'))
 solver.preprocess
