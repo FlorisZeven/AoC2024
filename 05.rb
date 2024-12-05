@@ -36,14 +36,18 @@ class PrintQueueSolver < AoCExerciseSolver
     true
   end
 
+  def sum_middle_numbers(updates)
+    updates..sum do |update|
+      update[update.length/2]
+    end
+  end
+
   def solve_part_1
     valid_updates = @updates.select do |update|
       valid_update?(update)
     end
 
-    valid_updates.sum do |update|
-      update[update.length/2]
-    end
+    sum_middle_numbers(valid_updates)
   end
 
   def solve_part_2
@@ -51,7 +55,12 @@ class PrintQueueSolver < AoCExerciseSolver
       valid_update?(update)
     end
 
-    # TODO: Sort
+    # TODO: Sort - Find rule that breaks -> swap values -> check validity again
+    updates_made_valid = invalid_updates.map do |invalid_update|
+
+    end
+
+    sum_middle_numbers(updates_made_valid)
   end
 end
 
