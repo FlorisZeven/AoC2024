@@ -1,5 +1,4 @@
 require_relative 'aoc'
-require_relative 'helpers/tree'
 
 class BridgeRepairSolver < AoCExerciseSolver
   attr_accessor :equations

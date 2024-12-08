@@ -108,7 +108,6 @@ class GridWalker
   end
   
   # @param [Boolean] mark_path Whether to mark the path that is walked
-  # @return [Boolean] Whether the walk resulted in an infinite loop
   def walk(mark_path: true)
     @walked_grid = Array.new(grid.length){Array.new(grid[0].length, false)} if mark_path
     seen_turns = {:up => [], :down => [], :right => [], :left => []}
