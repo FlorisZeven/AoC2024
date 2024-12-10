@@ -19,10 +19,11 @@ class HoofItSolver < AoCExerciseSolver
     end
   end
 
-  def build_graph
+  # A hiking map is a graph with directed edges to
+  def build_hiking_paths
     graph = Graph.new
 
-    # Create node for every grid cell
+    # Create node for every grid cell and populate index
     @grid.each_index do |row|
       @grid[row].each_index do |col|
         node = graph.add_node(Coord.new(row, col, @grid[row][col]))
@@ -42,6 +43,8 @@ class HoofItSolver < AoCExerciseSolver
     graph
   end
 
+  # Find nodes in graph that are neighbours in the grid, this is where the
+  # index comes in handy: (O(1) lookup instead of O(n))
   def neighbour_nodes(node)
     value = node.value
     neighbours = []
@@ -66,7 +69,7 @@ class HoofItSolver < AoCExerciseSolver
   end
 
   def solve_part_1
-    graph = build_graph
+    graph = build_hiking_paths
 
     trailheads = graph.nodes.select {|node| node.value.height.zero?}
 
@@ -77,7 +80,7 @@ class HoofItSolver < AoCExerciseSolver
   end
 
   def solve_part_2
-    graph = build_graph
+    graph = build_hiking_paths
 
     trailheads = graph.nodes.select {|node| node.value.height.zero?}
 
