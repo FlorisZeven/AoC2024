@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class CeresSearchSolver < AoCExerciseSolver
   attr_accessor :letter_table

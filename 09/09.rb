@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class DiskFragmenterSolver < AoCExerciseSolver
   attr_accessor :disk_map

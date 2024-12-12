@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 EMPTY_CHAR = '.'
 INITIAL_POSITION_CHAR = '^'

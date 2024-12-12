@@ -1,5 +1,5 @@
-require_relative 'aoc'
-require_relative 'helpers/graph'
+require_relative '../aoc'
+require_relative '../helpers/graph'
 
 class HoofItSolver < AoCExerciseSolver
   attr_accessor :grid

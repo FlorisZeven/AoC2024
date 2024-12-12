@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class HistorianHysteriaSolver < AoCExerciseSolver
   attr_accessor :left_ids

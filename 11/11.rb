@@ -1,6 +1,4 @@
-require_relative 'aoc'
-require_relative 'helpers/graph'
-
+require_relative '../aoc'
 
 class PlutonianPebblesSolver < AoCExerciseSolver
   attr_accessor :input_stones

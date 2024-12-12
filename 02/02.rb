@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class RedNosedReportsSolver < AoCExerciseSolver
   attr_accessor :reports

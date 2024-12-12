@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class MullItOverSolver < AoCExerciseSolver
   attr_accessor :raw_string

@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 
 class PrintQueueSolver < AoCExerciseSolver
   attr_accessor :after

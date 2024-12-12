@@ -1,4 +1,4 @@
-require_relative 'aoc'
+require_relative '../aoc'
 require 'matrix'
 
 class ResonantCollinearity < AoCExerciseSolver
