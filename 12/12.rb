@@ -18,7 +18,7 @@ class GardenGroupsSolver < AoCExerciseSolver
 
   RegionInfo = Struct.new(:area, :perimeter, :sides)
 
-  def new_coord_for(x, y, direction)
+  def next_coord_for(x, y, direction)
     case direction
     when :up then [x, y - 1]
     when :down then [x, y + 1]
@@ -57,13 +57,13 @@ class GardenGroupsSolver < AoCExerciseSolver
       additional_perimeter = 4 # Max value that can be added when processing a plot
       # Process neighbouring cells
       [:up, :down, :left, :right].each do |direction|
-        new_x, new_y = new_coord_for(x, y, direction)
-        if in_bounds?(new_x, new_y) && plot_value == @grid[new_y][new_x]
+        next_x, next_y = next_coord_for(x, y, direction)
+        if in_bounds?(next_x, next_y) && plot_value == @grid[next_y][next_x]
           additional_perimeter -= 1
-          if !@visited[new_y][new_x] # Not seen before
+          if !@visited[next_y][next_x] # Not seen before
             # We're going to visit it, so mark it as such
-            @visited[new_y][new_x] = true
-            to_visit_in_region << [new_x, new_y]
+            @visited[next_y][next_x] = true
+            to_visit_in_region << [next_x, next_y]
           end
         end
       end
