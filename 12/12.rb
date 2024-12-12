@@ -50,25 +50,26 @@ class GardenGroupsSolver < AoCExerciseSolver
     perimeter = 0
     sides = 0 # TODO: somehow compute sides? kek
 
-    to_visit_in_region = [[x,y]]
+    # A 'to-visit' stack, starts out with the initial coordinate
+    to_visit = [[x,y]]
 
-    until to_visit_in_region.empty? do
-      x, y = to_visit_in_region.shift
-      additional_perimeter = 4 # Max value that can be added when processing a plot
+    until to_visit.empty? do
+      x, y = to_visit.shift
       # Process neighbouring cells
       [:up, :down, :left, :right].each do |direction|
         next_x, next_y = next_coord_for(x, y, direction)
+
         if in_bounds?(next_x, next_y) && plot_value == @grid[next_y][next_x]
-          additional_perimeter -= 1
           if !@visited[next_y][next_x] # Not seen before
             # We're going to visit it, so mark it as such
             @visited[next_y][next_x] = true
-            to_visit_in_region << [next_x, next_y]
+            to_visit << [next_x, next_y]
           end
+        else
+          # Either edge of grid, or next to another plot, so add a perimeter
+          perimeter += 1
         end
       end
-
-      perimeter += additional_perimeter
       area += 1
     end
 
