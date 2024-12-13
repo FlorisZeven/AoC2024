@@ -7,7 +7,7 @@ class DiskFragmenterSolver < AoCExerciseSolver
   FreeBlock = Struct.new(:index, :size)
 
   def initialize(*args)
-    @disk_map = nil
+    @disk_map = []
     @free_blocks = []
     super
   end
@@ -20,7 +20,7 @@ class DiskFragmenterSolver < AoCExerciseSolver
     unpacked_disk_map = []
     id = 0
     @disk_map.each_with_index do |char, i|
-      if i % 2 == 0 # Handle file
+      if i.even? # Handle file
         unpacked_disk_map << Array.new(char.to_i, id)
         id += 1
       else # Handle free space
@@ -47,10 +47,10 @@ class DiskFragmenterSolver < AoCExerciseSolver
 
     until left > right do
       # Find next free space from left
-      if disk_map[left] != nil
+      if !disk_map[left].nil?
         left += 1
       # Find next non-free space from right
-      elsif disk_map[right] == nil
+      elsif disk_map[right].nil?
         right -= 1
       # If preconditions holds, swap
       else

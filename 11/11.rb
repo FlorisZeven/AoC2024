@@ -52,7 +52,7 @@ class PlutonianPebblesSolver < AoCExerciseSolver
 
     num_digits = stone.digits.length
     new_stones = if num_digits.even?
-                   half = num_digits.length / 2
+                   half = num_digits / 2
                    [stone.to_s[..half - 1], stone.to_s[half..]].map(&:to_i)
                  else
                    [stone * 2024, nil]
