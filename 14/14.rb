@@ -83,12 +83,12 @@ class RestroomRedoubtSolver < AoCExerciseSolver
   def solve_part_2
     preprocess # Resets robot positions
     
-    (1..50_000).each do |i|
+    (1..10_000).each do |i|
       grid = draw_grid
 
       grid.each do |row|
-        if row.join.include?('#' * (width / 5))
-          write_grid_to_file('output.txt', grid)
+        if row.join.include?('#' * (width / 4))
+          write_grid_to_file("#{@input_file}_output.txt", grid)
           return i
         end
       end
@@ -97,6 +97,8 @@ class RestroomRedoubtSolver < AoCExerciseSolver
         robot.move
       end
     end
+
+    return 'No tree found'
   end
 end
 
@@ -120,9 +122,9 @@ class Robot
   end
 end
 
-# test_solver = RestroomRedoubtSolver.new(__FILE__.sub('.rb', '_test.txt'), width: 11, height: 7)
-# test_solver.preprocess
-# test_solver.solve
+test_solver = RestroomRedoubtSolver.new(__FILE__.sub('.rb', '_test.txt'), width: 11, height: 7)
+test_solver.preprocess
+test_solver.solve
 
 solver = RestroomRedoubtSolver.new(__FILE__.sub('.rb', '_input.txt'), width: 101, height: 103)
 solver.preprocess
