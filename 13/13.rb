@@ -35,8 +35,8 @@ class ClawContraptionSolver < AoCExerciseSolver
     #  - a_y + a_presses + b_y + b_presses = sum_y
     #
     # Two unknowns, so:
-    #  - Rewrite both expressions to a_presses = ...
-    #  - Set them equal to each other to have b_presses as remaining unknown, then solve
+    #  - Rewrite one expressions to a_presses = ...
+    #  - Substitute that into the other expression to have b_presses as remaining unknown, then solve
     #  - Once b_presses is known, solve a_presses
     b_presses = (m.a_x * m.sum_y - m.a_y * m.sum_x).to_f / (m.a_x * m.b_y - m.a_y * m.b_x)
     a_presses = (m.sum_x - m.b_x * b_presses).to_f / m.a_x
