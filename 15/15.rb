@@ -4,9 +4,9 @@ class WareHouseWoesSolver < AoCExerciseSolver
   def initialize(*args); super; end
 
   def preprocess
-    raw_grid_data, moves = File.read(@input_file).split(/\n\n/) # Separate grid from moves
+    raw_grid_data, moves = File.read(@input_file).split(/\n\n/) # Separate grid from direction
     @raw_grid_data = raw_grid_data
-    @moves = moves.gsub(/\n/, '').chars.map { |move| parse_move(move) }
+    @directions = moves.gsub(/\n/, '').chars.map { |move| parse_move(move) }
   end
 
   def parse_move(move)
@@ -20,16 +20,16 @@ class WareHouseWoesSolver < AoCExerciseSolver
 
   def solve_part_1
     warehouse = WareHouse.new(@raw_grid_data)
-    @moves.each do |move|
-      warehouse.update(move)
+    @directions.each do |direction|
+      warehouse.move(move)
     end
     warehouse.gps_sum
   end
 
   def solve_part_2
     wide_warehouse = WareHouse.new(@raw_grid_data, wide: true)
-    @moves.each do |move|
-      wide_warehouse.update(move)
+    @directions.each do |direction|
+      wide_warehouse.move(move)
     end
     wide_warehouse.gps_sum
   end
@@ -62,9 +62,7 @@ class WareHouse
     @grid[robot_y][robot_x] = '.'
   end
 
-  # Update the grid after a robot_move
-  # @reeturn [<Integer, Integer>] new location of robot
-  def update(direction)
+  def move(direction)
     robot_x, robot_y = @robot_position
     next_x, next_y = next_coord_for(robot_x, robot_y, direction)
     next_cell = @grid[next_y][next_x]
@@ -112,7 +110,7 @@ class WareHouse
     empty_x, empty_y = next_empty_char_in_direction(x, y, direction)
     return false if empty_x.nil?
 
-    # Swapping this element with the first box essentially moves all boxes
+    # Swapping this element with the first box essentially direction all boxes
     @grid[y][x], @grid[empty_y][empty_x] = @grid[empty_y][empty_x], @grid[y][x]
     return true
   end
