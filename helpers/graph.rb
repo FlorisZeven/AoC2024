@@ -1,28 +1,41 @@
-# A graph class
-class GraphNode
-  attr_accessor :value
-  attr_accessor :edges
+# A graph transition
+class Transition
+  attr_accessor :from, :to, :weight
 
-  def initialize(value)
-    @value = value
-    @edges = []
-  end
-
-  def add_edge(index)
-    @edges << index
+  def initialize(from, to, weight)
+    @from = from
+    @to = to
+    @weight = weight
   end
 end
 
+# A graph state
+class State
+  attr_accessor :value
+
+  def initialize(value)
+    @value = value
+  end
+end
+
+# A graph
 class Graph
-  attr_accessor :nodes
+  attr_accessor :states, :transitions, :initial_state, :final_state
 
   def initialize
-    @nodes = []
+    @states = []
+    @transitions = Hash.new { |k, v| k[v] = [] }
   end
 
-  def add_node(value)
-    node = GraphNode.new(value)
-    @nodes << node
-    node
+  def add_state(value)
+    state = State.new(value)
+    @states << state
+    state
+  end
+
+  def add_transition(from, to, weight = nil)
+    transition = Transition.new(from, to, weight)
+    @transitions[from] << transition
+    transition
   end
 end

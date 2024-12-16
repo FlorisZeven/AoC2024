@@ -26,16 +26,16 @@ class HoofItSolver < AoCExerciseSolver
     # Create node for every grid cell and populate index
     @grid.each_index do |row|
       @grid[row].each_index do |col|
-        node = graph.add_node(Coord.new(row, col, @grid[row][col]))
+        node = graph.add_state(Coord.new(row, col, @grid[row][col]))
         @node_index[[row, col]] = node
       end
     end
 
     # Add edges when neighbouring value is 1 higher
-    graph.nodes.each do |node|
-      neighbour_nodes(node).each do |neighbour_node|
-        if neighbour_node.value.height - node.value.height == 1
-          node.add_edge(graph.nodes.index(neighbour_node))
+    graph.states.each do |state|
+      neighbour_nodes(state).each do |neighbour_node|
+        if neighbour_node.value.height - state.value.height == 1
+          graph.add_transition(state, graph.states.index(neighbour_node))
         end
       end
     end
@@ -58,10 +58,10 @@ class HoofItSolver < AoCExerciseSolver
   def find_trailhead_score(graph, node, visited, distinct: false)
     return 0 if !distinct && visited.include?(node)
     return 1 if node.value.height == 9 # End of path
-    return 0 if node.edges.empty? # Empty path
+    return 0 if node.transitions.empty? # Empty path
 
-    node.edges.sum do |edge|
-      next_node = graph.nodes[edge]
+    node.transitions.sum do |edge|
+      next_node = graph.states[edge]
       score = find_trailhead_score(graph, next_node, visited, distinct:)
       visited << next_node
       score
@@ -71,7 +71,7 @@ class HoofItSolver < AoCExerciseSolver
   def solve_part_1
     graph = build_hiking_paths
 
-    trailheads = graph.nodes.select {|node| node.value.height.zero?}
+    trailheads = graph.states.select {|node| node.value.height.zero?}
 
     trailheads.sum do |trailhead|
       visited = []
@@ -82,7 +82,7 @@ class HoofItSolver < AoCExerciseSolver
   def solve_part_2
     graph = build_hiking_paths
 
-    trailheads = graph.nodes.select {|node| node.value.height.zero?}
+    trailheads = graph.states.select {|node| node.value.height.zero?}
 
     trailheads.sum do |trailhead|
       visited = []
