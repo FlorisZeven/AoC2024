@@ -70,9 +70,9 @@ class WareHouse
     when WALL_CHAR  then nil                                # Don't move the robot
     when EMPTY_CHAR then @robot_position = [next_x, next_y] # Move the robot
     when BOX_CHAR   then
-      @robot_position = [next_x, next_y] if move_thin_boxes(next_x, next_y, direction)
+      @robot_position = [next_x, next_y] if update_thin_boxes(next_x, next_y, direction)
     when WIDE_BOX_LEFT_CHAR, WIDE_BOX_RIGHT_CHAR
-      @robot_position = [next_x, next_y] if move_wide_boxes(next_x, next_y, direction)
+      @robot_position = [next_x, next_y] if update_wide_boxes(next_x, next_y, direction)
     end
   end
 
@@ -106,7 +106,7 @@ class WareHouse
   end
 
   # @return [Boolean] whether the robot can mvoe
-  def move_thin_boxes(x, y, direction)
+  def update_thin_boxes(x, y, direction)
     empty_x, empty_y = next_empty_char_in_direction(x, y, direction)
     return false if empty_x.nil?
 
@@ -115,15 +115,15 @@ class WareHouse
     return true
   end
 
-  def move_wide_boxes(x, y, direction)
+  def update_wide_boxes(x, y, direction)
     if [:up, :down].include?(direction)
-      move_wide_boxes_y(x, y, direction)
+      update_wide_boxes_vertical(x, y, direction)
     else
-      move_wide_boxes_x(x, y, direction)
+      update_wide_boxes_horizontal(x, y, direction)
     end
   end
 
-  def move_wide_boxes_x(x, y, direction)
+  def update_wide_boxes_horizontal(x, y, direction)
     empty_x, empty_y = next_empty_char_in_direction(x, y, direction)
     return false if empty_x.nil?
     
@@ -141,7 +141,7 @@ class WareHouse
   end
 
   # Search for walls with BFS, move all visited boxes upward if no walls
-  def move_wide_boxes_y(x, y, direction) 
+  def update_wide_boxes_vertical(x, y, direction) 
     box_coordinates_to_visit = [[x,y], other_box_coord(x, y)]
     box_coordinates_visited = [[x,y], other_box_coord(x, y)]
     
