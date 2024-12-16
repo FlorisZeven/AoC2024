@@ -1,93 +1,120 @@
 require_relative '../aoc'
 require_relative '../helpers/graph'
 require 'set'
+require 'rb_heap'
 
 class ReindeerMazeSolver < AoCExerciseSolver
+  DIRECTIONS = [:up, :down, :left, :right]
+  INITIAL_DIRECTION = :right
+  START_CHAR = 'S'
+  END_CHAR = 'E'
+  WALL_CHAR = '#'
+
+  Cell = Struct.new(:position, :cost, :direction, keyword_init: true)
+  
   def initialize(*args)
     super
   end
 
   def preprocess
-    @maze_grid = File.read(@input_file).split(/\n/).map(&:chars)
+    @maze = File.read(@input_file).split(/\n/).map(&:chars)
+    start_position = position_for_char(START_CHAR)
+    end_position = position_for_char(END_CHAR)
+    @cost, @visited = dijkstra(start_position, end_position)
   end
 
   def solve_part_1
-    maze_searcher = MazeSearcher.new(@maze_grid)
-    maze_searcher.convert_to_graph
-    maze_searcher.find_lowest_cost
+    @cost
   end
 
   def solve_part_2
-
+    @visited
   end
-end
+  
+  def dijkstra(start_position, end_position)
+    prev = Hash.new {|k,v| k[v] = []}
+    costs = {[start_position, INITIAL_DIRECTION] => 0}
+    frontier = Heap.new{ |a, b| a.cost < b.cost }
+    frontier.add(Cell.new(position: start_position, cost: 0, direction: INITIAL_DIRECTION))
 
-class MazeSearcher
-  DIRECTIONS = [:up, :down, :left, :right].freeze
-  WALL_CHAR  = '#'.freeze
-  EMPTY_CHAR = '.'.freeze
-  START_CHAR = 'S'.freeze
-  END_CHAR   = 'E'.freeze
+    final_cost = nil
+    final_cell = nil
 
-  def initialize(maze)
-    @maze = maze
-  end
+    until frontier.empty?      
+      cell = frontier.pop
 
-  def find_lowest_cost
-    # TODO: UCS
-  end
+      next if final_cost && cell.cost > final_cost
 
-  def convert_to_graph
-    graph = Graph.new
-    initial_state = current_state = graph.add_state(start_position)
-    graph.initial_state = initial_state
-
-    visited = Set.new
-    to_visit = [current_state]
-
-    # Discover all graph nodes
-    until to_visit.empty?
-      current_state = to_visit.pop
-
-      x, y = current_state.value
-
-      DIRECTIONS.each do |direction|
-        next_x, next_y = next_coord_for(x, y, direction)
-
-        # Skip walls
-        next if @maze[next_y][next_x] == WALL_CHAR
-        # Skip states we have seen or will see in the future
-        next if visited.map(&:value).include?([next_x, next_y])
-        next if to_visit.map(&:value).include?([next_x, next_y])
-
-        next_state = graph.add_state([next_x, next_y])
-
-        graph.final_state = next_state if @maze[next_y][next_x] == END_CHAR
-
-        graph.add_transition(current_state, next_state)
-        graph.add_transition(next_state, current_state)
-
-        to_visit << next_state
+      if cell.position == end_position
+        final_cell = cell
       end
 
-      visited << current_state
+      # For each state
+      DIRECTIONS.each do |next_direction|
+        x, y = cell.position
+        next_position = next_coord_for(x, y, next_direction)
+        
+        next_x, next_y = next_position
+        next if @maze[next_y][next_x] == WALL_CHAR
+
+        # next_direction = new_direction(cell.position, next_position)
+        next_cost = if next_direction != cell.direction
+                      cell.cost + 1001 # We move and rotate in one go
+                    else
+                      cell.cost + 1
+                    end
+        
+        next_cell = Cell.new(position: next_position, cost: next_cost, direction: next_direction)
+
+        next_key = [next_position, next_direction]
+        current_key = [cell.position, cell.direction]
+        if !costs.key?(next_key) || next_cost < costs[next_key]
+          costs[next_key] = next_cost
+          frontier.add(next_cell)
+          prev[next_key] << current_key
+        elsif next_cost == costs[next_key]
+          prev[next_key] << current_key
+        end
+      end
     end
 
-    @graph = graph
+    # Postprocess
+
+    visited = Set.new
+    cells_to_process = [[final_cell.position, final_cell.direction]]
+    until cells_to_process.empty?
+      # byebug
+      cell_to_process = cells_to_process.pop
+      visited << cell_to_process.first
+      cells_to_process.concat(prev[cell_to_process]) if prev.key?(cell_to_process)
+    end
+    
+    @maze.each_index do |y|
+      @maze[y].each_index do |x|
+        @maze[y][x] = ' ' if visited.include?([x, y])
+      end
+    end
+
+    @maze.each {|r| puts r.join }
+    
+    return [final_cell.cost, visited.size]
   end
 
-  def start_position
-    @start_position ||= position_for_char(START_CHAR)
-  end
+  def new_direction(current_position, next_position)
+    x, y = current_position
+    next_x, next_y = next_position
 
-  def end_position
-    @end_position ||= position_for_char(END_CHAR)
-  end
-
-  def position_for_char(char)
-    char_y = @maze.index { |r| r.include?(char) }
-    char_x = @maze[char_y].index(char)
-    [char_x, char_y]
+    if x < next_x
+      :right
+    elsif x > next_x
+      :left
+    elsif y < next_y
+      :down 
+    elsif y > next_y
+      :up
+    else
+      raise 'Cannot determine new direction'
+    end
   end
 
   def next_coord_for(x, y, direction)
@@ -97,6 +124,12 @@ class MazeSearcher
     when :left  then [x - 1, y]
     when :right then [x + 1, y]
     end
+  end
+
+  def position_for_char(char)
+    char_y = @maze.index { |r| r.include?(char) }
+    char_x = @maze[char_y].index(char)
+    [char_x, char_y]
   end
 end
 
