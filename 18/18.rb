@@ -26,14 +26,16 @@ class RamRunSolver < AoCExerciseSolver
   def solve_part_1
     memory_space = MemorySpace.new(@memory_size, @bytes)
     memory_space.process_bytes_from_start(@num_bytes_part1)
-    memory_space.lowest_cost_to_exit
+    memory_space.lowest_cost_start_to_end
   end
 
   def solve_part_2
     memory_space = MemorySpace.new(@memory_size, @bytes)
+
     # Brute force solution (~20 seconds)
     # part_2_brute_force(memory_space)
-    # TODO: Binary search on byte index should be *much* quicker
+
+    # Binary Search solution (< 1 second)
     part_2_binary_search(memory_space)
   end
 
@@ -44,7 +46,7 @@ class RamRunSolver < AoCExerciseSolver
     @num_bytes_part1.upto(@bytes.length) do |byte_index|
       byte = @bytes[byte_index]
       memory_space.process_byte(byte)
-      result = memory_space.lowest_cost_to_exit
+      result = memory_space.lowest_cost_start_to_end
       return byte if result == 'No solution'
     end
   end
@@ -60,7 +62,7 @@ class RamRunSolver < AoCExerciseSolver
     until index == middle
       index = middle
       memory_space.process_bytes_from_start(index)
-      result = memory_space.lowest_cost_to_exit
+      result = memory_space.lowest_cost_start_to_end
       # Update left/right index based on result
       result == 'No solution' ? right = index : left = index
 
@@ -105,7 +107,7 @@ class MemorySpace
   end
 
   # Essentially Dijkstra
-  def lowest_cost_to_exit
+  def lowest_cost_start_to_end
     initial_cell = Cell.new(position: @start_position, cost: 0)
     frontier = Heap.new { |a, b| a.cost < b.cost }
     frontier.add(initial_cell)
