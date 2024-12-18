@@ -1,6 +1,4 @@
 require_relative '../aoc'
-require_relative '../helpers/graph'
-require 'set'
 require 'rb_heap'
 
 class ReindeerMazeSolver < AoCExerciseSolver
