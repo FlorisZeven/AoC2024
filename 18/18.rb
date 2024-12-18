@@ -10,10 +10,10 @@ class RamRunSolver < AoCExerciseSolver
     # Ew but I hate switching numbers
     if @input_file == __FILE__.sub('.rb', '_test.txt')
       @memory_size = 7
-      @num_bytes   = 12
+      @num_bytes_part1 = 12
     elsif @input_file == __FILE__.sub('.rb', '_input.txt')
       @memory_size = 71
-      @num_bytes   = 1024
+      @num_bytes_part1 = 1024
     end
   end
 
@@ -25,7 +25,7 @@ class RamRunSolver < AoCExerciseSolver
 
   def solve_part_1
     memory_space = MemorySpace.new(@memory_size, @bytes)
-    memory_space.process_bytes(@num_bytes)
+    memory_space.process_bytes_from_start(@num_bytes_part1)
     memory_space.lowest_cost_to_exit
   end
 
@@ -39,9 +39,9 @@ class RamRunSolver < AoCExerciseSolver
 
   def part_2_brute_force(memory_space)
     # We know there is a path up to part 1
-    memory_space.process_bytes(@num_bytes)
+    memory_space.process_bytes_from_start(@num_bytes_part1)
 
-    @num_bytes.upto(@bytes.length) do |byte_index|
+    @num_bytes_part1.upto(@bytes.length) do |byte_index|
       byte = @bytes[byte_index]
       memory_space.process_byte(byte)
       result = memory_space.lowest_cost_to_exit
@@ -50,7 +50,8 @@ class RamRunSolver < AoCExerciseSolver
   end
 
   def part_2_binary_search(memory_space)
-    left = @num_bytes
+    # We know there is a path up to part 1
+    left = @num_bytes_part1
     right = @bytes.length
     index = nil
     middle = (left + right) / 2
@@ -58,8 +59,7 @@ class RamRunSolver < AoCExerciseSolver
     # If the index has not updated, we have found the first index where there is no solution
     until index == middle
       index = middle
-      memory_space.clear_memory
-      memory_space.process_bytes(index)
+      memory_space.process_bytes_from_start(index)
       result = memory_space.lowest_cost_to_exit
       # Update left/right index based on result
       result == 'No solution' ? right = index : left = index
@@ -81,6 +81,7 @@ class MemorySpace
   Cell = Struct.new(:position, :cost, keyword_init: true)
 
   def initialize(memory_size, bytes)
+    @memory = nil
     @memory_size = memory_size
     @bytes = bytes
     @start_position = [0, 0]
@@ -93,12 +94,9 @@ class MemorySpace
     @memory = Array.new(@memory_size) { Array.new(@memory_size, '.') }
   end
 
-  def process_bytes(num_bytes)
-    bytes_to_process = @bytes.take(num_bytes)
-
-    bytes_to_process.each do |byte_x, byte_y|
-      @memory[byte_y][byte_x] = CORRUPTED_CHAR
-    end
+  def process_bytes_from_start(num_bytes)
+    clear_memory
+    @bytes.take(num_bytes).each { |byte| process_byte(byte) }
   end
 
   def process_byte(byte)
@@ -134,6 +132,8 @@ class MemorySpace
 
     'No solution'
   end
+
+  private
 
   def corrupted?(position)
     x, y = position
