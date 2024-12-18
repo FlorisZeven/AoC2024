@@ -31,31 +31,43 @@ class RamRunSolver < AoCExerciseSolver
 
   def solve_part_2
     memory_space = MemorySpace.new(@memory_size, @bytes)
-    # We know there is a path up to part 1
-    memory_space.process_bytes(@num_bytes)
-
     # Brute force solution (~20 seconds)
-    part_2_brute_force(memory_space)
+    # part_2_brute_force(memory_space)
     # TODO: Binary search on byte index should be *much* quicker
     part_2_binary_search(memory_space)
   end
 
   def part_2_brute_force(memory_space)
+    # We know there is a path up to part 1
+    memory_space.process_bytes(@num_bytes)
+
     @num_bytes.upto(@bytes.length) do |byte_index|
       byte = @bytes[byte_index]
       memory_space.process_byte(byte)
       result = memory_space.lowest_cost_to_exit
-      return byte if result == -1
+      return byte if result == 'No solution'
     end
   end
 
   def part_2_binary_search(memory_space)
-    # TODO:
+    left = @num_bytes
+    right = @bytes.length
+    index = nil
+    middle = (left + right) / 2
 
-    # Calculate new index
-    # Clear memory
-    # Process bytes up to new index
-    # Check result
+    # If the index has not updated, we have found the first index where there is no solution
+    until index == middle
+      index = middle
+      memory_space.clear_memory
+      memory_space.process_bytes(index)
+      result = memory_space.lowest_cost_to_exit
+      # Update left/right index based on result
+      result == 'No solution' ? right = index : left = index
+
+      middle = (left + right) / 2
+    end
+
+    @bytes[index]
   end
 end
 
@@ -120,7 +132,7 @@ class MemorySpace
       end
     end
 
-    -1 # No solution found
+    'No solution'
   end
 
   def corrupted?(position)
