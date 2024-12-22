@@ -1,6 +1,7 @@
 # Require useful modules
 
 require 'byebug'
+require 'awesome_print'
 
 # Useful class
 
