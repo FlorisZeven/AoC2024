@@ -30,7 +30,9 @@ module KeyPadHelper
        (dy.negative? && dx.negative? && value_for([arm_x, char_y]) == '.' || # v> passes .
         dy.positive? && dx.positive? && value_for([char_x, arm_y]) == '.')   # <^ passes .
       commands.reverse!  
-    elsif self.class.name == 'NumericalKeyPadRobot' &&
+    end
+    
+    if self.class.name == 'NumericalKeyPadRobot' &&
       (dy.negative? && dx.positive? && value_for([arm_x, char_y]) == '.' ||  # <v passes .
        dy.positive? && dx.negative? && value_for([char_x, arm_y]) == '.')    # ^> passes .
       commands.reverse!  
