@@ -28,8 +28,11 @@ class Graph
   end
 
   def add_state(value)
-    state = State.new(value)
-    @states << state
+    state = @states.find { |s| s.value == value }
+    unless state
+      state = State.new(value)
+      @states << state
+    end
     state
   end
 

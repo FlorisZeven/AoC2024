@@ -26,15 +26,15 @@ module KeyPadHelper
 
     # Our optimal commmand order does not always work, because it may cross a gap (.)
     # The conditions for this differ per keypad because the gap is in a different position
-    if self.class.name == 'NumericalKeyPadRobot' &&
+    if instance_of?(::NumericalKeyPadRobot) &&
        (dy.negative? && dx.negative? && value_for([arm_x, char_y]) == '.' || # v> passes .
         dy.positive? && dx.positive? && value_for([char_x, arm_y]) == '.')   # <^ passes .
       commands.reverse!  
     end
     
-    if self.class.name == 'NumericalKeyPadRobot' &&
-      (dy.negative? && dx.positive? && value_for([arm_x, char_y]) == '.' ||  # <v passes .
-       dy.positive? && dx.negative? && value_for([char_x, arm_y]) == '.')    # ^> passes .
+    if instance_of?(::NumericalKeyPadRobot) &&
+       (dy.negative? && dx.positive? && value_for([arm_x, char_y]) == '.' ||  # <v passes .
+        dy.positive? && dx.negative? && value_for([char_x, arm_y]) == '.')    # ^> passes .
       commands.reverse!  
     end
 
@@ -55,7 +55,7 @@ module KeyPadHelper
     x, y = position
     layout = self.class::KEYPAD_LAYOUT
 
-    return nil if layout[y].nil? || layout[y][x].nil?
+    return nil if layout[y].nil? || layout[y][x].nil? # Out of bounds  check
 
     layout[y][x] 
   end
