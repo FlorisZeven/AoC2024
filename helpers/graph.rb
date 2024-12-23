@@ -41,4 +41,8 @@ class Graph
     @transitions[from] << transition
     transition
   end
+
+  def successors(state)
+    @transitions[state].map(&:to)
+  end
 end
