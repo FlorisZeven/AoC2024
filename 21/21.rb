@@ -19,7 +19,6 @@ class KeypadConundrumSovler < AoCExerciseSolver
     @codes.sum do |code|
       sum = historian.presses_for_code(code)
       complexity = code[/\d+/].to_i
-      pp [sum, complexity]
       sum * complexity
     end
   end
