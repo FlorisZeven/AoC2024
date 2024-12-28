@@ -32,7 +32,7 @@ class CrossedWiresSolver < AoCExerciseSolver
   end
 
   def solve_part_1
-    target_wires = @graph.states.select {|wire| wire.id.start_with?('z')}
+    target_wires = @graph.states.select { |wire| wire.id.start_with?('z') }
 
     wire_graph = WireGraph.new(@graph)
     vals = target_wires.sort_by(&:id).reverse.map do |wire|
@@ -43,7 +43,7 @@ class CrossedWiresSolver < AoCExerciseSolver
 
   def solve_part_2
     # Let's hecking visualize
-    g = GraphViz.new(:G, :type => :digraph)
+    g = GraphViz.new(:G, type: :digraph)
     
     @graph.states.each do |state|
       options = {}
@@ -61,7 +61,7 @@ class CrossedWiresSolver < AoCExerciseSolver
       end
     end
 
-    g.output(:png => "#{@input_file}_output.png")
+    g.output(png: "#{@input_file}_output.png")
   end
 end
 
@@ -69,24 +69,24 @@ class WireGraph
   attr_accessor :graph
 
   def initialize(graph)
-    @graph = graph      
+    @graph = graph
   end
 
   def determine_wire_value(wire)
-    return wire.value if !wire.value.nil? # Known value, can return
+    return wire.value unless wire.value.nil? # Known value, can return
 
     gate = graph.successors(wire).first
     # Recurse for unknown in-wires
-    unknown_wires = graph.successors(gate).select {|unknown_wire| unknown_wire.value.nil?}
+    unknown_wires = graph.successors(gate).select { |unknown_wire| unknown_wire.value.nil? }
     unknown_wires.each do |unknown_wire|
       value = determine_wire_value(unknown_wire)
       unknown_wire.value = value
     end
     in_value_1, in_value_2 = graph.successors(gate).map(&:value) # These are now all known
     case gate.value
-    when 'XOR' then return in_value_1 ^ in_value_2
-    when 'AND' then return in_value_1 & in_value_2
-    when 'OR'  then return in_value_1 | in_value_2
+    when 'XOR' then in_value_1 ^ in_value_2
+    when 'AND' then in_value_1 & in_value_2
+    when 'OR'  then in_value_1 | in_value_2
     end
   end
 end
